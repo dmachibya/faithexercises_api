@@ -21,15 +21,28 @@ class BibleController extends Controller
 
     public function versions(Request $request): JsonResponse
     {
-        $res = $this->client()->get('/bibles', [
-            // forward a few optional filters if provided
-            'language' => $request->query('language'),
-            'abbreviation' => $request->query('abbreviation'),
-            'name' => $request->query('name'),
-            'include-full-details' => $request->boolean('include_full_details', false),
-            'page' => $request->query('page'),
-            'pageSize' => $request->query('pageSize'),
-        ]);
+        // Build query only with provided params to avoid invalid inputs
+        $query = [];
+        foreach (['language', 'abbreviation', 'name', 'page', 'pageSize'] as $key) {
+            $value = $request->query($key);
+            if (!is_null($value) && $value !== '') {
+                $query[$key] = $value;
+            }
+        }
+        if (!is_null($request->query('include_full_details'))) {
+            $query['include-full-details'] = $request->boolean('include_full_details') ? 'true' : 'false';
+        }
+
+        $res = $this->client()->get('/bibles', $query);
+        if ($res->failed()) {
+            $body = json_decode($res->body(), true);
+            return response()->json([
+                'message' => 'Upstream error from API.Bible',
+                'endpoint' => '/bibles',
+                'sent' => $query,
+                'upstream' => $body ?? $res->body(),
+            ], $res->status());
+        }
 
         return response()->json($res->json(), $res->status());
     }
@@ -41,7 +54,16 @@ class BibleController extends Controller
             return response()->json(['message' => 'versionId is required'], 422);
         }
 
-        $res = $this->client()->get("/bibles/{$versionId}/books");
+        $path = "/bibles/{$versionId}/books";
+        $res = $this->client()->get($path);
+        if ($res->failed()) {
+            $body = json_decode($res->body(), true);
+            return response()->json([
+                'message' => 'Upstream error from API.Bible',
+                'endpoint' => $path,
+                'upstream' => $body ?? $res->body(),
+            ], $res->status());
+        }
         return response()->json($res->json(), $res->status());
     }
 
@@ -53,7 +75,16 @@ class BibleController extends Controller
             return response()->json(['message' => 'versionId and bookId are required'], 422);
         }
 
-        $res = $this->client()->get("/bibles/{$versionId}/books/{$bookId}/chapters");
+        $path = "/bibles/{$versionId}/books/{$bookId}/chapters";
+        $res = $this->client()->get($path);
+        if ($res->failed()) {
+            $body = json_decode($res->body(), true);
+            return response()->json([
+                'message' => 'Upstream error from API.Bible',
+                'endpoint' => $path,
+                'upstream' => $body ?? $res->body(),
+            ], $res->status());
+        }
         return response()->json($res->json(), $res->status());
     }
 
@@ -77,7 +108,17 @@ class BibleController extends Controller
             'use-org-id' => $request->boolean('use_org_id', false),
         ];
 
-        $res = $this->client()->get("/bibles/{$versionId}/passages", $query);
+        $path = "/bibles/{$versionId}/passages";
+        $res = $this->client()->get($path, $query);
+        if ($res->failed()) {
+            $body = json_decode($res->body(), true);
+            return response()->json([
+                'message' => 'Upstream error from API.Bible',
+                'endpoint' => $path,
+                'sent' => $query,
+                'upstream' => $body ?? $res->body(),
+            ], $res->status());
+        }
         return response()->json($res->json(), $res->status());
     }
 }
