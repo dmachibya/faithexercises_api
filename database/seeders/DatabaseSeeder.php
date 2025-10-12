@@ -44,6 +44,8 @@ class DatabaseSeeder extends Seeder
                 $exercise = Exercise::create([
                     'title' => $title,
                     'description' => null,
+                    'summary' => 'Summary for ' . $title . '. This is a brief description of the practice and how to start.',
+                    'feature_image_url' => null,
                     'sort_order' => $i + 1,
                 ]);
 

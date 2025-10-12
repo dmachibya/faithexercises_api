@@ -13,6 +13,8 @@ class Exercise extends Model
     protected $fillable = [
         'title',
         'description',
+        'summary',
+        'feature_image_url',
         'sort_order',
     ];
 
