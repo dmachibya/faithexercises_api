@@ -10,6 +10,8 @@ class TaskProgress extends Model
 {
     use HasFactory;
 
+    protected $table = 'task_progresses';
+
     protected $fillable = [
         'user_id',
         'task_id',

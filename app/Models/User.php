@@ -24,6 +24,8 @@ class User extends Authenticatable
         'password',
         'google_id',
         'avatar',
+        'is_admin',
+        'role',
     ];
 
     /**
@@ -46,6 +48,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
+            'role' => 'integer',
         ];
     }
 }

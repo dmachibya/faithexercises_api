@@ -8,10 +8,36 @@ use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\TaskAdminController;
 use App\Http\Controllers\TaskProgressController;
 use App\Http\Controllers\JournalController;
+use App\Http\Controllers\UserPreferenceController;
+use App\Http\Controllers\UserGoalController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// Test endpoint to verify API is working
+Route::get('/test', function () {
+    return response()->json(['message' => 'API is working', 'timestamp' => now()]);
+});
+
+// Test POST endpoint to verify POST requests work
+Route::post('/test-post', function (Request $request) {
+    return response()->json([
+        'message' => 'POST request working',
+        'received_data' => $request->all(),
+        'timestamp' => now()
+    ]);
+});
+
+// Test registration endpoint (temporary debug)
+Route::post('/test-register', function (Request $request) {
+    return response()->json([
+        'message' => 'Registration endpoint reached',
+        'data' => $request->all(),
+        'headers' => $request->headers->all(),
+        'timestamp' => now()
+    ]);
+});
 
 Route::post('/auth/google', [AuthController::class, 'google']);
 Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -36,6 +62,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/journals', [JournalController::class, 'store']);
     Route::put('/journals/{journal}', [JournalController::class, 'update']);
     Route::delete('/journals/{journal}', [JournalController::class, 'destroy']);
+
+    // User Preferences
+    Route::get('/user/preferences', [UserPreferenceController::class, 'show']);
+    Route::post('/user/preferences', [UserPreferenceController::class, 'store']);
+    Route::put('/user/preferences', [UserPreferenceController::class, 'update']);
+    Route::delete('/user/preferences', [UserPreferenceController::class, 'destroy']);
+    Route::get('/user/preferences/options', [UserPreferenceController::class, 'options']);
+
+    // User Goals
+    Route::get('/user/goals', [UserGoalController::class, 'index']);
+    Route::post('/user/goals', [UserGoalController::class, 'store']);
+    Route::get('/user/goals/{id}', [UserGoalController::class, 'show']);
+    Route::put('/user/goals/{id}', [UserGoalController::class, 'update']);
+    Route::delete('/user/goals/{id}', [UserGoalController::class, 'destroy']);
+    Route::patch('/user/goals/{id}/progress', [UserGoalController::class, 'updateProgress']);
+    Route::patch('/user/goals/{id}/toggle', [UserGoalController::class, 'toggleCompletion']);
+    Route::get('/user/goals/options', [UserGoalController::class, 'options']);
+    Route::get('/user/goals/statistics', [UserGoalController::class, 'statistics']);
 });
 
 // Bible proxy endpoints (API.Bible)

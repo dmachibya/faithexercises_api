@@ -38,13 +38,26 @@ class DatabaseSeeder extends Seeder
                 'Expect the second coming of Jesus',
             ];
 
+            $summaries = [
+                'Decide' => 'Here, you will learn the power of decisions and how they significantly contribute to starting your journey as a Christian or life in general... This exercise will help you begin today and never turn back.',
+                'Forgive' => 'The power of forgiveness has an impact that earthly words may not fully explain... forgiveness is freedom, peace, love, rest, and a connection to God.',
+                'Be grateful' => 'Thanking God for both small and big things acknowledges His blessings. If we do not learn to be grateful, we will never recognize the value of blessings released daily for us.',
+                'Do not fear' => 'Fear is the foundation of a negative attitude that shuts doors of faith. These exercises will help cure excessive fear and build confidence in life and ministry.',
+                'Be positive' => 'Cultivate positivity to grow faith. Stop complaining and learn to see life’s opportunities filled with God’s blessings; rejoice rather than sorrow as a lifestyle.',
+                'Love' => 'The Bible teaches that love is a weapon for victory. Learn how to love yourself and others so that God’s love may manifest in your life.',
+                'Help other' => 'Learn the secret of helping others (even with little) and how it blesses lives, brings inner peace, and strengthens faith over a dependency mindset.',
+                'Acquit wealth' => 'Let go of anger and negative emotions that consume resources of time and energy; allow your mind to engage in progressive, God-honoring processes.',
+                'Be humble' => 'Humility helps us relate to everyone and respect both humans and God. This virtue grows faith as we recognize our dependence on one another.',
+                'Expect the second coming of Jesus' => 'Anticipating Jesus’ return transforms life; understanding this world is not our home elevates faith as we wait for our Lord to take us home.',
+            ];
+
             $today = Carbon::today();
 
             foreach ($titles as $i => $title) {
                 $exercise = Exercise::create([
                     'title' => $title,
                     'description' => null,
-                    'summary' => 'Summary for ' . $title . '. This is a brief description of the practice and how to start.',
+                    'summary' => $summaries[$title] ?? null,
                     'feature_image_url' => null,
                     'sort_order' => $i + 1,
                 ]);
