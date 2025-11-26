@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'fcm' => [
+        'server_key' => env('FCM_SERVER_KEY'),
+    ],
+
+    'fcm_v1' => [
+        'project_id' => env('FCM_PROJECT_ID'),
+        // Absolute path to the service account JSON or JSON string
+        'credentials_json' => env('FCM_CREDENTIALS_JSON'),
+        'credentials_file' => env('FCM_CREDENTIALS_FILE'),
+    ],
+
 ];

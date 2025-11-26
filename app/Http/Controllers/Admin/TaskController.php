@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Exercise;
 use App\Models\Task;
+use App\Jobs\SendTaskNotification;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -49,7 +52,28 @@ class TaskController extends Controller
 
         $data['is_active'] = (bool)($data['is_active'] ?? false);
 
-        Task::create($data);
+        $task = Task::create($data);
+        Log::info('Task created', [
+            'task_id' => $task->id,
+            'exercise_id' => $task->exercise_id,
+            'is_active' => (bool) $task->is_active,
+            'start_date' => $task->start_date,
+        ]);
+
+        // Notify users: send now if active and due; schedule if in the future
+        if ($task->is_active) {
+            $start = $task->start_date ? Carbon::parse($task->start_date) : null;
+            if (!$start || $start->isPast()) {
+                Log::info('Dispatching SendTaskNotification immediately', ['task_id' => $task->id]);
+                dispatch(new SendTaskNotification($task->id));
+            } else {
+                Log::info('Dispatching SendTaskNotification with delay', [
+                    'task_id' => $task->id,
+                    'delay_at' => $start->toIso8601String(),
+                ]);
+                dispatch((new SendTaskNotification($task->id))->delay($start));
+            }
+        }
 
         return redirect()->route('admin.dashboard')
             ->with('success', 'Task created successfully.');
