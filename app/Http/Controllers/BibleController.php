@@ -44,7 +44,67 @@ class BibleController extends Controller
             ], $res->status());
         }
 
-        return response()->json($res->json(), $res->status());
+        $payload = $res->json();
+
+        // Optional filtering of preferred/popular English versions
+        $preferredFlag = $request->boolean('preferred', false) || $request->boolean('popular', false);
+        if ($preferredFlag) {
+            $preferred = ['KJV','NIV','ESV','NLT','NKJV','NRSV','CSB','NASB','MSG','ASV','AMP','GNT','NIrV'];
+
+            // Helper: case-insensitive match via abbr/id/name
+            $matches = function(array $item, string $abbr): bool {
+                $abbrLower = strtolower($abbr);
+                $id = isset($item['id']) ? strtolower((string)$item['id']) : '';
+                $name = isset($item['name']) ? strtolower((string)$item['name']) : '';
+                $a = isset($item['abbreviation']) ? strtolower((string)$item['abbreviation']) : '';
+                return $a === $abbrLower || $id === $abbrLower || $name === $abbrLower
+                    || ($a !== '' && str_contains($a, $abbrLower))
+                    || ($name !== '' && str_contains($name, $abbrLower));
+            };
+
+            // Normalize list from payload
+            $list = null;
+            if (is_array($payload)) {
+                if (array_is_list($payload)) {
+                    $list = $payload;
+                } elseif (isset($payload['data']) && is_array($payload['data'])) {
+                    $list = $payload['data'];
+                }
+            }
+
+            if (is_array($list)) {
+                // Filter
+                $filtered = array_values(array_filter($list, function ($item) use ($preferred, $matches) {
+                    foreach ($preferred as $abbr) {
+                        if ($matches((array)$item, $abbr)) return true;
+                    }
+                    return false;
+                }));
+
+                // Order by preferred list order
+                $rankOf = function($item) use ($preferred, $matches) {
+                    $best = PHP_INT_MAX;
+                    foreach ($preferred as $i => $abbr) {
+                        if ($matches((array)$item, $abbr)) {
+                            $best = min($best, $i);
+                        }
+                    }
+                    return $best;
+                };
+                usort($filtered, function($a, $b) use ($rankOf) {
+                    return $rankOf($a) <=> $rankOf($b);
+                });
+
+                // Re-wrap into original shape
+                if (array_is_list($payload)) {
+                    $payload = $filtered;
+                } else {
+                    $payload['data'] = $filtered;
+                }
+            }
+        }
+
+        return response()->json($payload, $res->status());
     }
 
     public function books(Request $request): JsonResponse
