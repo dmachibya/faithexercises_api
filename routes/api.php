@@ -10,6 +10,8 @@ use App\Http\Controllers\TaskProgressController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\UserPreferenceController;
 use App\Http\Controllers\UserGoalController;
+use App\Http\Controllers\BlogNotificationController;
+use App\Http\Middleware\VerifyWebhookSignature;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -101,4 +103,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/exercises/{exercise}/tasks', [TaskAdminController::class, 'store']);
     Route::put('/tasks/{task}', [TaskAdminController::class, 'update']);
     Route::delete('/tasks/{task}', [TaskAdminController::class, 'destroy']);
+});
+
+// Webhook endpoints (secured by API key + domain validation)
+Route::middleware(VerifyWebhookSignature::class)->group(function () {
+    Route::post('/webhook/blog-notify', [BlogNotificationController::class, 'notify']);
 });

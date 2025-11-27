@@ -46,4 +46,10 @@ return [
         'credentials_file' => env('FCM_CREDENTIALS_FILE'),
     ],
 
+    'webhook' => [
+        'api_key' => env('WEBHOOK_API_KEY'),
+        'secret' => env('WEBHOOK_SECRET'),
+        'allowed_domains' => array_filter(explode(',', env('WEBHOOK_ALLOWED_DOMAINS', 'faithexercisesministries.org'))),
+    ],
+
 ];
