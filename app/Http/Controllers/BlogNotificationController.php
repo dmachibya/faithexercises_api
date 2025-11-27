@@ -18,6 +18,13 @@ class BlogNotificationController extends Controller
      */
     public function notify(Request $request)
     {
+        Log::info('BlogNotification: Webhook endpoint hit', [
+            'ip' => $request->ip(),
+            'method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'raw_input' => $request->all(),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'post_id' => 'required|integer',
             'title' => 'required|string|max:255',
