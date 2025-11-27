@@ -72,12 +72,12 @@ class SendTaskNotification implements ShouldQueue
         // Broadcast to all users via topic. Alternatively, gather tokens and call sendToTokens().
         $ok = $fcm->sendToTopic('all_users', $title, $body, $data);
         if ($ok) {
-            Log::info('SendTaskNotification: FCM topic send ok', [
+            Log::info('SendTaskNotification: FCM v1 topic send ok', [
                 'task_id' => $task->id,
                 'topic' => 'all_users',
             ]);
         } else {
-            Log::error('SendTaskNotification: FCM topic send failed', [
+            Log::error('SendTaskNotification: FCM v1 topic send failed', [
                 'task_id' => $task->id,
                 'topic' => 'all_users',
             ]);

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class FcmService
 {
@@ -37,7 +38,7 @@ class FcmService
     {
         $serverKey = config('services.fcm.server_key');
         if (!$serverKey) {
-            \Log::warning('FCM server key missing');
+            Log::warning('FCM legacy server key missing');
             return false;
         }
 
@@ -47,12 +48,16 @@ class FcmService
         ])->post($this->endpoint, $payload);
 
         if (!$res->successful()) {
-            \Log::error('FCM send failed', [
+            Log::error('FCM legacy send failed', [
                 'status' => $res->status(),
                 'body' => $res->body(),
             ]);
             return false;
         }
+        Log::info('FCM legacy send success', [
+            'status' => $res->status(),
+            'body' => $res->body(),
+        ]);
         return true;
     }
 }
