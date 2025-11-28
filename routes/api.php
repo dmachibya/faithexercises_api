@@ -10,6 +10,7 @@ use App\Http\Controllers\TaskProgressController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\UserPreferenceController;
 use App\Http\Controllers\UserGoalController;
+use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\BlogNotificationController;
 use App\Http\Middleware\VerifyWebhookSignature;
 
@@ -82,6 +83,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/user/goals/{id}/toggle', [UserGoalController::class, 'toggleCompletion']);
     Route::get('/user/goals/options', [UserGoalController::class, 'options']);
     Route::get('/user/goals/statistics', [UserGoalController::class, 'statistics']);
+
+    // User Identities
+    Route::get('/identities', [IdentityController::class, 'index']);
+    Route::post('/identities', [IdentityController::class, 'store']);
+    Route::put('/identities/{identity}', [IdentityController::class, 'update']);
+    Route::delete('/identities/{identity}', [IdentityController::class, 'destroy']);
 });
 
 // Bible proxy endpoints (API.Bible)

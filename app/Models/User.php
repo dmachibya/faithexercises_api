@@ -52,4 +52,9 @@ class User extends Authenticatable
             'role' => 'integer',
         ];
     }
+
+    public function identities()
+    {
+        return $this->hasMany(Identity::class);
+    }
 }
