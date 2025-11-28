@@ -68,8 +68,11 @@ class BlogNotificationController extends Controller
             'image_url' => $data['image_url'] ?? '',
         ];
 
+        // Image URL for notification display (optional)
+        $imageUrl = !empty($data['image_url']) ? $data['image_url'] : null;
+
         // Send to all_users topic
-        $success = $this->fcm->sendToTopic('all_users', $title, $body, $fcmData);
+        $success = $this->fcm->sendToTopic('all_users', $title, $body, $fcmData, $imageUrl);
 
         if ($success) {
             Log::info('BlogNotification: FCM sent successfully', [

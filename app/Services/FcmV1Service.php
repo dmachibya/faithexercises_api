@@ -9,21 +9,29 @@ class FcmV1Service
 {
     private const FCM_SCOPE = 'https://www.googleapis.com/auth/firebase.messaging';
 
-    public function sendToTopic(string $topic, string $title, string $body, array $data = []): bool
+    public function sendToTopic(string $topic, string $title, string $body, array $data = [], ?string $imageUrl = null): bool
     {
         Log::info('FCM v1: sendToTopic called', [
             'topic' => $topic,
             'title' => $title,
             'body' => $body,
             'data' => $data,
+            'image_url' => $imageUrl,
         ]);
+
+        $notification = [
+            'title' => $title,
+            'body' => $body,
+        ];
+
+        // Add image to notification if provided (shows in notification tray)
+        if ($imageUrl) {
+            $notification['image'] = $imageUrl;
+        }
 
         $message = [
             'topic' => $topic,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-            ],
+            'notification' => $notification,
             'data' => $this->stringifyData($data),
         ];
 
