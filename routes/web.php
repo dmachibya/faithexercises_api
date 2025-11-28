@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\ReflectionController;
+use App\Http\Controllers\Admin\CustomNotificationController as AdminCustomNotificationController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -27,6 +28,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
         // Reflections
         Route::resource('reflections', ReflectionController::class);
+        // Custom Notifications
+        Route::resource('notifications', AdminCustomNotificationController::class)->only(['index', 'create', 'store']);
     });
 });
 

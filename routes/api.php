@@ -12,6 +12,7 @@ use App\Http\Controllers\UserPreferenceController;
 use App\Http\Controllers\UserGoalController;
 use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\ReflectionController;
+use App\Http\Controllers\CustomNotificationController;
 use App\Http\Controllers\BlogNotificationController;
 use App\Http\Middleware\VerifyWebhookSignature;
 
@@ -93,6 +94,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Daily Reflections
     Route::get('/reflections', [ReflectionController::class, 'index']);
+
+    // Custom Notifications
+    Route::get('/custom-notifications/{notification}', [CustomNotificationController::class, 'show']);
 });
 
 // Bible proxy endpoints (API.Bible)
