@@ -11,6 +11,7 @@ use App\Http\Controllers\JournalController;
 use App\Http\Controllers\UserPreferenceController;
 use App\Http\Controllers\UserGoalController;
 use App\Http\Controllers\IdentityController;
+use App\Http\Controllers\ReflectionController;
 use App\Http\Controllers\BlogNotificationController;
 use App\Http\Middleware\VerifyWebhookSignature;
 
@@ -89,6 +90,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/identities', [IdentityController::class, 'store']);
     Route::put('/identities/{identity}', [IdentityController::class, 'update']);
     Route::delete('/identities/{identity}', [IdentityController::class, 'destroy']);
+
+    // Daily Reflections
+    Route::get('/reflections', [ReflectionController::class, 'index']);
 });
 
 // Bible proxy endpoints (API.Bible)

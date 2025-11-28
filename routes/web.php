@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\Admin\ReflectionController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -24,6 +25,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('tasks', [TaskController::class, 'index'])->name('tasks.index');
         Route::get('tasks/create', [TaskController::class, 'create'])->name('tasks.create');
         Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
+        // Reflections
+        Route::resource('reflections', ReflectionController::class);
     });
 });
 
